@@ -1,0 +1,50 @@
+﻿@page "/Ctecnicos"
+@inject TecnicoServices tecnicosServices
+
+<PageTitle>Consulta de tecnicos</PageTitle>
+<h1>Consultas de tecnicos</h1>
+
+<a href="CreateTecnicos" class="btn-link">
+    <span>Agregar un Nuevo Tecnico <i class="bi bi-file-earmark-plus-fill" /></span>
+</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tecnicos Id</th>
+            <th>Nombre</th>
+            <th>Sueldo Hora</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Lista_Tecnicos)
+        {
+            <tr>
+                <td>@item.TecnicosId</td>
+                <td>@item.Nombre</td>
+                <td>@item.SueldoHora.ToString("N2")</td>
+                <td>
+                    <a href="/EditTecnicos/@item.TecnicosId"><button type="button" class="btn btn-outline-info">Editar</button></a>
+                </td>
+                <td>
+                    <a href="/DeleteTecnicos/@item.TecnicosId"><button type="button" class="btn btn-outline-danger">Eliminar</button></a>
+                </td>
+              
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+@code
+{
+    public Tecnicos tecnico { set; get; } = new Tecnicos();
+    public List<Tecnicos> Lista_Tecnicos { set; get; } = new List<Tecnicos>();
+
+    protected override async void OnInitialized()
+    {
+        Lista_Tecnicos = tecnicosServices.Listar(l => true);
+    }
+}

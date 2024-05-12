@@ -1,0 +1,90 @@
+﻿@page "/EditTecnicos"
+@page "/EditTecnicos/{TecnicosId:int}"
+@inject TecnicoServices tecnicosServices
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Editar tecnicos</PageTitle>
+<EditForm Model="tecnicos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card-header">
+            <h1>Editar tecnicos</h1>
+        </div>
+        <div class="card-body">
+            <label>TecnicosId:</label>
+            <div class="id-input">
+                <InputNumber readOnly @bind-Value="tecnicos.TecnicosId" class="id-input"></InputNumber>
+            </div>
+
+            <div class="col-md-6">
+                <label>Nombres:</label>
+                <InputText @bind-Value="tecnicos.Nombre" class="form-control"></InputText>
+                <ValidationMessage For="@(() => tecnicos.Nombre)" />
+            </div>
+            
+            <div class="col-md-6">
+                <label>SueldoHora:</label>
+                <InputNumber @bind-Value="tecnicos.SueldoHora" class="form-control"></InputNumber>
+                <ValidationMessage For="@(() => tecnicos.SueldoHora)" />
+            </div>
+
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-file-earmark" /> Editar
+            </button>
+            <button type="button" class="btn btn-secondary" @onclick="volver">
+                <span>Volver a Consulta</span> <i class="bi bi-arrow-return-left" />
+            </button>
+        </div>
+        @mensaje       
+    </div>
+
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int TecnicosId { get; set; }
+    public Tecnicos tecnicos { get; set; } = new Tecnicos();
+    public string mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tecnicos = await tecnicosServices.Buscar(TecnicosId);
+    }
+
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            var tecnicoModificado = await tecnicosServices.Guardar(tecnicos);
+
+            if (tecnicoModificado)
+            {
+                volver();
+            }        
+        }     
+    }
+
+    void volver()
+    {
+        navigationManager.NavigateTo("Ctecnicos");
+    }
+
+    public async Task<bool> Validar()
+    {
+        var tecnicoNombre = await tecnicosServices.BuscarSueldo(tecnicos.SueldoHora);
+
+        if (tecnicoNombre != null)
+        {
+            mensaje = "El Sueldo no tuvo cambios.";
+            return true;
+        }
+        return false;
+    }
+
+
+}

@@ -1,0 +1,99 @@
+﻿@page "/CreateTecnicos"
+@inject TecnicoServices tecnicosServices
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Registro de tecnicos</PageTitle>
+<EditForm Model="tecnicos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card-header">
+            <h1>Registro de Tecnicos</h1>
+        </div>
+        <div class="card-body">
+            <div class="col-2">
+                <label>TecnicosId:</label>
+                <div class="id-input">
+                    <InputNumber @bind-Value="tecnicos.TecnicosId" readonly class="form-control"></InputNumber>
+                </div>
+            </div>
+
+
+            <div class="col-md-6">
+                <label>Nombres:</label>
+                <InputText @bind-Value="tecnicos.Nombre" class="form-control"></InputText>
+                <ValidationMessage For="@(() => tecnicos.Nombre)" />
+            </div>
+
+            <div class="col-md-6">
+                <label>SueldoHora:</label>
+                <InputNumber @bind-Value="tecnicos.SueldoHora" min="1" class="form-control"></InputNumber>
+                <ValidationMessage For="@(() => tecnicos.SueldoHora)" />
+            </div>
+
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <button type="button" class="btn btn-primary" @onclick="() => Guardar()">
+                <span>Crear <i class="bi bi-file-earmark" /></span>
+            </button>
+            <button type="button" class="btn btn-secondary" @onclick="Volver">
+                <span>Volver a Consulta</span> <i class="bi bi-arrow-return-left" />
+            </button>
+        </div>
+        @mensaje
+    </div>
+
+</EditForm>
+
+
+@code
+{
+    private Tecnicos tecnicos { get; set; } = new Tecnicos();
+    private string mensaje = string.Empty;
+
+
+    private async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            if (await tecnicosServices.Insertar(this.tecnicos))
+            {
+                Nuevo();
+                mensaje = "El tecnico fue guardado correctamente.";
+                Volver();
+            }
+            else
+            {
+                Nuevo();
+                mensaje = "No se puedo guardar.";
+            }
+        }
+    }
+
+
+    private void Nuevo()
+    {
+        tecnicos = new Tecnicos();
+        mensaje = string.Empty;
+    }
+
+    public async Task<bool> Validar()
+    {
+        var nombre = await tecnicosServices.BuscarNombre(this.tecnicos.Nombre);
+
+        if (nombre != null)
+        {
+            mensaje = "Error tecnico existente.";
+            return true;
+        }
+        return false;
+
+    }
+
+    void Volver()
+    {
+        navigationManager.NavigateTo("Ctecnicos");
+    }
+
+}

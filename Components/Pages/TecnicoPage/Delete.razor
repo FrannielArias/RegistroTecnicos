@@ -1,0 +1,50 @@
+﻿@page "/DeleteTecnicos/{TecnicosId:int}"
+@inject TecnicoServices tecnicoServices
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+
+@rendermode InteractiveServer
+
+<h3>Eliminar Tecnicos</h3>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Detalles de tecnicos</h5>
+            <dl class="row">
+                <dt class="col-sm-3">tecnicoId:</dt>
+                <dd class="col-sm-9">@Tecnico.Result?.TecnicosId</dd>
+
+                <dt class="col-sm-3">Nombres:</dt>
+                <dd class="col-sm-9">@Tecnico.Result?.Nombre</dd>
+
+                <dt class="col-sm-3">Email:</dt>
+                <dd class="col-sm-9">@Tecnico.Result?.SueldoHora</dd>              
+            </dl>
+            <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
+            <a href="/Ctecnicos" class="btn btn-link">Volver a Consulta</a>
+        </div>
+    </div>
+
+
+@code {
+    [Parameter]
+    public int TecnicosId { get; set; }
+
+    public Task<Tecnicos?> Tecnico { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Tecnico = tecnicoServices.Buscar(TecnicosId);
+        await Tecnico;
+    }
+
+    public async Task Eliminar()
+    {
+        var tecnico = await Tecnico;
+        if (tecnico != null)
+        {
+            await tecnicoServices.Eliminar(tecnico);
+            navigationManager.NavigateTo("Ctecnicos");
+        }
+    }
+}
