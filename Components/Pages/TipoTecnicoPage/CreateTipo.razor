@@ -1,0 +1,92 @@
+﻿@page "/CreateTipoTecnicos"
+@inject TipoTecnicoServices tipoTecnicosServices
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Registro de tipo t&eacute;cnicos</PageTitle>
+<EditForm Model="tipoTecnico" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card-header">
+            <h1>Registro de tipo t&eacute;cnico</h1>
+        </div>
+        <div class="card-body">
+            <div class="col-2">
+                <label>TipoId:</label>
+                <div class="id-input">
+                    <InputNumber @bind-Value="tipoTecnico.TipoId" readonly class="form-control"></InputNumber>
+                </div>
+            </div>
+
+
+            <div class="col-md-6">
+                <label>Descripci&oacute;n:</label>
+                <InputText @bind-Value="tipoTecnico.Descripcion" class="form-control"></InputText>
+                <ValidationMessage For="@(() => tipoTecnico.Descripcion)" />
+            </div>
+        
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <button type="button" class="btn btn-primary" @onclick="() => Guardar()">
+                <span>Crear <i class="bi bi-file-earmark" /></span>
+            </button>
+            <button type="button" class="btn btn-secondary" @onclick="Volver">
+                <span>Volver a Consulta</span> <i class="bi bi-arrow-return-left" />
+            </button>
+        </div>
+        @mensaje
+    </div>
+
+</EditForm>
+
+
+@code
+{
+    private TipoTecnico tipoTecnico { get; set; } = new TipoTecnico();
+    private string mensaje = string.Empty;
+
+
+    private async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            if (await tipoTecnicosServices.Insertar(this.tipoTecnico))
+            {
+                Nuevo();
+                mensaje = "El tecnico fue guardado correctamente.";
+                Volver();
+            }
+            else
+            {
+                Nuevo();
+                mensaje = "No se puedo guardar.";
+            }
+        }
+    }
+
+    private void Nuevo()
+    {
+        tipoTecnico = new TipoTecnico();
+        mensaje = string.Empty;
+    }
+
+    public async Task<bool> Validar()
+    {
+        var descripcion = await tipoTecnicosServices.BuscarDescripcion(this.tipoTecnico.Descripcion);
+
+        if (descripcion != null)
+        {
+            mensaje = "Error descripcion existente.";
+            return true;
+        }
+        return false;
+
+    }
+
+    void Volver()
+    {
+        navigationManager.NavigateTo("Ctecnicos");
+    }
+
+}

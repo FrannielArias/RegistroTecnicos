@@ -32,8 +32,7 @@ public class TecnicoServices
     public async Task<bool> Insertar(Tecnicos tecnicos)
     {
         _contexto.Add(tecnicos);
-        return await _contexto
-            .SaveChangesAsync() > 0;
+        return await _contexto.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> Modificar(Tecnicos tecnicos)
@@ -50,7 +49,7 @@ public class TecnicoServices
             .ExecuteDeleteAsync();
         return cantidad > 0;
     }
-
+   
     public async Task<Tecnicos?> BuscarNombre(string nombre)
     {
         return await _contexto.Tecnicos
@@ -65,17 +64,17 @@ public class TecnicoServices
             .FirstOrDefaultAsync(c => c.SueldoHora == sueldoHora);
     }
 
-
     public async Task<Tecnicos?> Buscar(int TecnicosId)
     {
-        return await _contexto.Tecnicos.AsNoTracking().FirstOrDefaultAsync(C => C.TecnicosId == TecnicosId);
+        return await _contexto.Tecnicos.AsNoTracking()
+            .FirstOrDefaultAsync(C => C.TecnicosId == TecnicosId);
     }
 
-    public List<Tecnicos> Listar(Expression<Func<Tecnicos, bool>> Criterio)
+    public async Task<List<Tecnicos>> Listar(Expression<Func<Tecnicos, bool>> Criterio)
     {
-        return _contexto.Tecnicos
+        return await _contexto.Tecnicos
             .Where(Criterio)
             .AsNoTracking()
-            .ToList();
+            .ToListAsync();
     }
 }

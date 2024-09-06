@@ -4,32 +4,49 @@
 @inject IJSRuntime jsRuntime
 @rendermode InteractiveServer
 
-<PageTitle>Registro de tecnicos</PageTitle>
+<PageTitle>Registro de T&eacute;cnicos</PageTitle>
 <EditForm Model="tecnicos" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <div class="container">
         <div class="card-header">
-            <h1>Registro de Tecnicos</h1>
+            <h1>Registro de T&eacute;cnico</h1>
         </div>
         <div class="card-body">
             <div class="col-2">
+                @*Campo Tecnicos Id*@
                 <label>TecnicosId:</label>
                 <div class="id-input">
                     <InputNumber @bind-Value="tecnicos.TecnicosId" readonly class="form-control"></InputNumber>
                 </div>
             </div>
 
-
             <div class="col-md-6">
+                @*Campo de Nombre*@
                 <label>Nombres:</label>
                 <InputText @bind-Value="tecnicos.Nombre" class="form-control"></InputText>
                 <ValidationMessage For="@(() => tecnicos.Nombre)" />
             </div>
 
             <div class="col-md-6">
+                @*Campo de sueldo por horas*@
                 <label>SueldoHora:</label>
                 <InputNumber @bind-Value="tecnicos.SueldoHora" min="1" class="form-control"></InputNumber>
                 <ValidationMessage For="@(() => tecnicos.SueldoHora)" />
+            </div>
+
+            <div class="col-3">
+                @*Tipo Tecnico*@
+                <label>TipoTecnico</label>
+                <div class="input-group mb-3">
+                    <InputSelect class="form-select" @bind-Value="TipoTecnicoc">
+                        <option value="0" disabled selected>Seleccione un t&eacute;cnico</option>
+                        @foreach (var producto in tipoTecnicos)
+                        {                           
+                            <option value="@producto.TipoId">@producto.Descripcion</option>                         
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => tecnicos.TipoId)"></ValidationMessage>
+                </div>
             </div>
 
         </div>
@@ -51,7 +68,8 @@
 {
     private Tecnicos tecnicos { get; set; } = new Tecnicos();
     private string mensaje = string.Empty;
-
+    private int TipoTecnicoc;
+    public IEnumerable<TipoTecnico> tipoTecnicos { get; set; } = Enumerable.Empty<TipoTecnico>();
 
     private async Task Guardar()
     {
@@ -70,7 +88,6 @@
             }
         }
     }
-
 
     private void Nuevo()
     {
@@ -95,5 +112,4 @@
     {
         navigationManager.NavigateTo("Ctecnicos");
     }
-
 }

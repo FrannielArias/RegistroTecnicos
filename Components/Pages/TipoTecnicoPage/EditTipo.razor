@@ -1,0 +1,82 @@
+﻿@page "/EditTipoTecnicos"
+@page "/EditTipoTecnicos/{TipoId:int}"
+@inject TipoTecnicoServices tipoTecnicosServices
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Editar Tipo T&eacute;cnicos</PageTitle>
+<EditForm Model="tipoTecnicos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card-header">
+            <h1>Editar Tipo t&eacute;cnicos</h1>
+        </div>
+        <div class="card-body">
+            <label>Tipo Id:</label>
+            <div class="id-input">
+                <InputNumber readOnly @bind-Value="tipoTecnicos.TipoId" class="id-input"></InputNumber>
+            </div>
+
+            <div class="col-md-6">
+                <label>Descripcion:</label>
+                <InputText @bind-Value="tipoTecnicos.Descripcion" class="form-control"></InputText>
+                <ValidationMessage For="@(() => tipoTecnicos.Descripcion)" />
+            </div>
+
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-file-earmark" /> Editar
+            </button>
+            <button type="button" class="btn btn-secondary" @onclick="volver">
+                <span>Volver a Consulta</span> <i class="bi bi-arrow-return-left" />
+            </button>
+        </div>
+        @mensaje
+    </div>
+
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int TipoId { get; set; }
+    public TipoTecnico tipoTecnicos { get; set; } = new TipoTecnico();
+    public string mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tipoTecnicos = await tipoTecnicosServices.Buscar(TipoId);
+    }
+
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            var descripcionModificado = await tipoTecnicosServices.Guardar(tipoTecnicos);
+
+            if (descripcionModificado)
+            {
+                volver();
+            }
+        }
+    }
+
+    void volver()
+    {
+        navigationManager.NavigateTo("CtipoTecnicos");
+    }
+
+    public async Task<bool> Validar()
+    {
+        var descripcion = await tipoTecnicosServices.BuscarDescripcion(tipoTecnicos.Descripcion);
+
+        if (descripcion != null)
+        {
+            mensaje = "La descripcion no tuvo cambios.";
+            return true;
+        }
+        return false;
+    }
+}

@@ -5,21 +5,27 @@
 
 @rendermode InteractiveServer
 
-<h3>Eliminar Tecnicos</h3>
+<h3>Eliminar T&eacute;cnicos</h3>
 
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Detalles de tecnicos</h5>
+            @*DetalleTenico*@
+        <h5 class="card-title">Detalles de T&eacute;cnico</h5>
+
             <dl class="row">
-                <dt class="col-sm-3">tecnicoId:</dt>
+                @*Campo Tecnicos Id*@
+            <dt class="col-sm-3">T&eacute;cnico Id:</dt>
                 <dd class="col-sm-9">@Tecnico.Result?.TecnicosId</dd>
 
+                @*Campo Nombres*@
                 <dt class="col-sm-3">Nombres:</dt>
                 <dd class="col-sm-9">@Tecnico.Result?.Nombre</dd>
 
-                <dt class="col-sm-3">Email:</dt>
+                @*Campo Sueldo Hora*@
+                <dt class="col-sm-3">Suelado hora:</dt>
                 <dd class="col-sm-9">@Tecnico.Result?.SueldoHora</dd>              
             </dl>
+            @*Boton Eliminar*@
             <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
             <a href="/Ctecnicos" class="btn btn-link">Volver a Consulta</a>
         </div>

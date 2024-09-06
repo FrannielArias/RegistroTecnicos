@@ -1,0 +1,47 @@
+﻿@page "/DeleteTipoTecnico/{TipoId:int}"
+@inject TipoTecnicoServices tipoTecnicoServices
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+
+@rendermode InteractiveServer
+
+<h3>Eliminar T&eacute;cnicos</h3>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Detalles de tipo t&eacute;cnico</h5>
+        <dl class="row">
+            <dt class="col-sm-3">Tipo Id:</dt>
+            <dd class="col-sm-9">@tipoTecnico.Result?.TipoId</dd>
+
+            <dt class="col-sm-3">Descripci&oacute;n:</dt>
+            <dd class="col-sm-9">@tipoTecnico.Result?.Descripcion</dd>
+
+        </dl>
+        <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
+        <a href="/CtipoTecnicos" class="btn btn-link">Volver a Consulta</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int TipoId { get; set; }
+
+    public Task<TipoTecnico?> tipoTecnico { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        tipoTecnico = tipoTecnicoServices.Buscar(TipoId);
+        await tipoTecnico;
+    }
+
+    public async Task Eliminar()
+    {
+        var tipoTecnico = new TipoTecnico();
+        if (tipoTecnico != null)
+        {
+            await tipoTecnicoServices.Eliminar(tipoTecnico);
+            navigationManager.NavigateTo("CtipoTecnicos");
+        }
+    }
+}

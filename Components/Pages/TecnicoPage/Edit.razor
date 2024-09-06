@@ -5,25 +5,30 @@
 @inject IJSRuntime jsRuntime
 @rendermode InteractiveServer
 
-<PageTitle>Editar tecnicos</PageTitle>
+<PageTitle>Editar T&eacute;cnicos</PageTitle>
 <EditForm Model="tecnicos" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
+    @*Tabla Tecnicos*@
     <div class="container">
+        @*Editar Tecnicos*@
         <div class="card-header">
-            <h1>Editar tecnicos</h1>
+            <h1>Editar t&eacute;cnicos</h1>
         </div>
         <div class="card-body">
-            <label>TecnicosId:</label>
+            @*Campo Tecnicos Id*@
+            <label>T&eacute;cnico Id:</label>
             <div class="id-input">
                 <InputNumber readOnly @bind-Value="tecnicos.TecnicosId" class="id-input"></InputNumber>
             </div>
-
+            
+            @*Campo Nombre*@
             <div class="col-md-6">
                 <label>Nombres:</label>
                 <InputText @bind-Value="tecnicos.Nombre" class="form-control"></InputText>
                 <ValidationMessage For="@(() => tecnicos.Nombre)" />
             </div>
             
+            @*Campo Sueldo hora*@
             <div class="col-md-6">
                 <label>SueldoHora:</label>
                 <InputNumber @bind-Value="tecnicos.SueldoHora" class="form-control"></InputNumber>
@@ -31,10 +36,12 @@
             </div>
 
         </div>
+        @*Editar*@
         <div class="card-footer d-flex justify-content-between">
             <button type="submit" class="btn btn-primary">
                 <i class="bi bi-file-earmark" /> Editar
             </button>
+            @*Volver a Consulta*@
             <button type="button" class="btn btn-secondary" @onclick="volver">
                 <span>Volver a Consulta</span> <i class="bi bi-arrow-return-left" />
             </button>
@@ -85,6 +92,4 @@
         }
         return false;
     }
-
-
 }

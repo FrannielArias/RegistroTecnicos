@@ -1,17 +1,41 @@
 ﻿@page "/Ctecnicos"
 @inject TecnicoServices tecnicosServices
+@rendermode InteractiveServer
 
-<PageTitle>Consulta de tecnicos</PageTitle>
-<h1>Consultas de tecnicos</h1>
+<PageTitle>Consulta de T&eacute;cnicos</PageTitle>
+<h1>Consultas de T&eacute;cnico</h1>
 
 <a href="CreateTecnicos" class="btn-link">
-    <span>Agregar un Nuevo Tecnico <i class="bi bi-file-earmark-plus-fill" /></span>
+    <span>Agregar un Nuevo t&eacute;cnico <i class="bi bi-file-earmark-plus-fill" /></span>
 </a>
+
+<div class="row mb-3 align-items-end">
+    <div class="col-md-3">
+        <label for="filtro" class="form-label">Filtrar por:</label>
+        <select @bind="filtro" class="form-select">
+            <option value="TecnicoId">ID</option>
+            <option value="Nombre">Descripci&oacuten</option>
+            <option value="Sueldo Hora">Sueldo por horas</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="valorFiltro" class="form-label">Búsqueda:</label>
+        <div class="input-group">
+            <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+            <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
+                <span class="bi bi-search"></span> Buscar
+            </button>
+        </div>
+    </div>
+    <div class="col-md-3 text-end">
+        <a href="/Prioridad/Create" class="btn btn-success" type="button"><span class="bi bi-floppy"></span> Crear </a>
+    </div>
+</div>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Tecnicos Id</th>
+            <th>T&eacute;cnico Id</th>
             <th>Nombre</th>
             <th>Sueldo Hora</th>
             <th>Editar</th>
@@ -43,8 +67,34 @@
     public Tecnicos tecnico { set; get; } = new Tecnicos();
     public List<Tecnicos> Lista_Tecnicos { set; get; } = new List<Tecnicos>();
 
+    private string filtro = "Id";
+    private string valorFiltro = "";
+
     protected override async void OnInitialized()
     {
-        Lista_Tecnicos = tecnicosServices.Listar(l => true);
+        Lista_Tecnicos = await tecnicosServices.Listar(l => true);
+    }
+
+    private async Task Buscar()
+    {
+        if (valorFiltro.Trim() != "")
+        {
+            if (filtro == "TecnicoId" && int.TryParse(valorFiltro, out int TecnicoId))
+            {
+                Lista_Tecnicos = await tecnicosServices.Listar(t => t.TecnicosId == TecnicoId);
+            }
+            else if (filtro == "Nombre")
+            {
+                Lista_Tecnicos = await tecnicosServices.Listar(t => t.Nombre.ToLower().Contains(valorFiltro.ToLower()));
+            }
+            else if (filtro == "Sueldo Hora" && int.TryParse(valorFiltro, out int SueldoHora))
+            {
+                Lista_Tecnicos = await tecnicosServices.Listar(t => t.SueldoHora == SueldoHora);
+            }
+        }
+        else
+        {
+            Lista_Tecnicos = await tecnicosServices.Listar(t => true);
+        }
     }
 }
